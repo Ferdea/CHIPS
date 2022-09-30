@@ -1,16 +1,18 @@
 from readfile import *
-def ReadChipsData():
-    chipsData = {}
-    file = open("chipsdata.txt")
-    for s in file:
-        chipName, chipIn, chipOut, chipTime, nandCount = s.split()
-        chipsData[chipName] = list(chipIn.split(",")), list(chipOut.split(",")), int(chipTime), int(nandCount)
-    file.close()
-    return chipsData
+from processinfo import *
+from calculate import *
+
 
 def main():
     chipsData = ReadChipsData()
-    ReadChip(chipsData)
+    fileName = f'chipFiles/{GetChipName()}.hdl'
+    file = GetSimplifiedFile(fileName)
+
+    inputInfo, outputInfo, chipsInfo = SplitSimpleFile(file, chipsData)
+
+    print("Время чипа в нандах: ", CalculateTime(inputInfo, chipsInfo))
+    print("Кол-во нандов: ", CalculatePrice(chipsInfo))
+
 
 if __name__ == "__main__":
     main()
