@@ -36,7 +36,7 @@ def GetInfoAboutChip(s, chipsData):
 
 
 def SplitSimpleFile(file, chipsData):
-    result = [[], [], []] # 0 - IN, 1 - OUT, 2 - PARTS
+    result = [["true", "false"], [], []] # 0 - IN, 1 - OUT, 2 - PARTS
     state = -1
     for s in file:
         if s in ("IN:", "OUT:", "PARTS:"):

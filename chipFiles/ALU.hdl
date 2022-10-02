@@ -42,37 +42,24 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    Not(in=zx, out=notZx);
-    Amplifier(in=notZx, out=zx16);
-    And16(a=x, b=zx16, out=zX);
+    Amplifier(in=false, out=false16);
 
-    Amplifier(in=nx, out=nx16);
-    Nand16(a=zX, b=nx16, out=xNandNx);
-    Nand16(a=zX, b=xNandNx, out=x2NandNx);
-    Nand16(a=xNandNx, b=nx16, out=xNandNx2);
-    Nand16(a=x2NandNx, b=xNandNx2, out=nzX);
+    Mux16(a=x, b=false16, sel=zx, out=zeroX);
+    Not16(in=zeroX, out=negateX);
+    Mux16(a=zeroX, b=negateX, sel=nx, out=negateZeroX);
 
-    Not(in=zy, out=notZy);
-    Amplifier(in=notZy, out=zy16);
-    And16(a=y, b=zy16, out=zY);
-
-    Amplifier(in=ny, out=ny16);
-    Nand16(a=zY, b=ny16, out=yNandNy);
-    Nand16(a=zY, b=yNandNy, out=y2NandNy);
-    Nand16(a=yNandNy, b=ny16, out=yNandNy2);
-    Nand16(a=y2NandNy, b=yNandNy2, out=nzY);
+    Mux16(a=y, b=false16, sel=zy, out=zeroY);
+    Not16(in=zeroY, out=negateY);
+    Mux16(a=zeroY, b=negateY, sel=ny, out=negateZeroY);
     
-    Add16(a=nzX, b=nzY, out=sumXY);
-    And16(a=nzX, b=nzY, out=andXY);
+    Add16(a=negateZeroX, b=negateZeroY, out=sumXY);
+    And16(a=negateZeroX, b=negateZeroY, out=andXY);
 
     Mux16(a=andXY, b=sumXY, sel=f, out=preOut);
 
-    Amplifier(in=no, out=no16);
-    Nand16(a=preOut, b=no16, out=oNandNo);
-    Nand16(a=preOut, b=oNandNo, out=o2NandNo);
-    Nand16(a=oNandNo, b=no16, out=oNandNo2);
-    Nand16(a=o2NandNo, b=oNandNo2, out=Out, out=out, out[15]=ng);
+    Not16(in=preOut, out=negatePreOut);
+    Mux16(a=preOut, b=negatePreOut, sel=no, out=out, out=Out, out[15]=ng);
 
-    Or16Way(in=Out, out=notZr);
-    Not(in=notZr, out=zr);
+    Or16Way(in=Out, out=notZero);
+    Not(in=notZero, out=zr);
 }
